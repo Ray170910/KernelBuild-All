@@ -730,7 +730,7 @@ jobs:
         id: create_zip
         run: |
           cd kernel_workspace
-          git clone https://github.com/cctv18/AnyKernel3 --depth=1
+          for i in 1 2 3; do git clone https://github.com/cctv18/AnyKernel3 --depth=1 && break; echo "重试 $i"; sleep 5; done
           rm -rf ./AnyKernel3/.git
           cd AnyKernel3
           cp ../common/out/arch/arm64/boot/Image ./Image
