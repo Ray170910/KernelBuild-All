@@ -921,13 +921,13 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: ${{ env.ARTIFACT_NAME }}
-          path: ${{ github.workspace }}/kernel_workspace/*AK3*.zip
+          path: ${{ github.workspace }}/kernel_workspace/${{ steps.create_zip.outputs.ak3name }}
           archive: false
 
       - name: 上传 Boot ZIP 工件
         uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.boot_zip.outputs.bootname }}
-          path: ${{ github.workspace }}/kernel_workspace/Boot_fastboot*.zip
+          path: ${{ github.workspace }}/kernel_workspace/${{ steps.boot_zip.outputs.bootname }}
           archive: false
 

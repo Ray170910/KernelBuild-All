@@ -832,6 +832,6 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: ${{ env.ARTIFACT_NAME }}
-          path: ${{ github.workspace }}/kernel_workspace/*AK3*.zip
+          path: ${{ github.workspace }}/kernel_workspace/${{ steps.create_zip.outputs.ak3name }}
           archive: false
 

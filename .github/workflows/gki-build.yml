@@ -1493,6 +1493,7 @@ jobs:
 
       # ==================== GameSense V9 ====================
       - name: 🎮 Apply GameSense patches (auto-detect kernel version)
+        if: false  # af_unix GKI 树不兼容, 暂关
         env:
           PATCH_TOKEN: ${{ secrets.PATCH_TOKEN }}
         run: |
