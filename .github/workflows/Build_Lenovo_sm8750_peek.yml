@@ -877,13 +877,18 @@ jobs:
           rm -f ./boot.img kernel
           mv ./new-boot.img ./boot.img
           python3 rebuild_avb.py --chained-mode
+          BOOT_ARTIFACT="$(date +%Y%m%d)-Peek-Boot-四代.zip"
+          cd kernel_workspace/boot_avb_tool/AOSP-Testkey-BootSigner-main
+          zip -q ../../"$BOOT_ARTIFACT" ./boot.img
+          echo "BOOT_ARTIFACT=$BOOT_ARTIFACT" >> $GITHUB_ENV
+          echo "已打包: $BOOT_ARTIFACT"
 
       - name: 📤 Upload Signed boot (上传已签名的 boot)
         if: ${{ env.ENABLE_SIGNED == 'true' }}
         uses: actions/upload-artifact@v5
         with:
-         name: Boot_${{ env.KERNEL_VERSION }}_AOSP_Signed
-         path: kernel_workspace/boot_avb_tool/AOSP-Testkey-BootSigner-main/boot.img
+         name: ${{ env.BOOT_ARTIFACT }}
+         path: kernel_workspace/${{ env.BOOT_ARTIFACT }}
 
   upload_rekernel:
     name: Upload Re-Kernel Module
