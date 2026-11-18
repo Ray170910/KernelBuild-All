@@ -1,0 +1,58 @@
+name: 🚀 一键全量编译
+
+on:
+  workflow_dispatch:
+    inputs:
+      skip_gki:
+        description: '跳过 GKI 线(5.10/5.15/6.1/6.6/6.12)'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  trigger:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: 触发全部构建
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          WORKFLOWS=(
+            # fastbuild 系(13 条)
+            "fastbuild_6.12.23_mtk.yml"
+            "fastbuild_6.12.58_mtk.yml"
+            "fastbuild_6.12.23_gki.yml"
+            "fastbuild_6.12.69_gki.yml"
+            "fastbuild_6.12.58.yml"
+            "fastbuild_6.1.118_peek.yml"
+            "fastbuild_6.1.118.yml"
+            "fastbuild_6.1.141.yml"
+            "fastbuild_6.6.89_mtk_peek.yml"
+            "fastbuild_6.6.89_mtk.yml"
+            "fastbuild_6.6.89.yml"
+            # Lenovo 系(2 条)
+            "Build_Lenovo_sm8750.yml"
+            "Build_Lenovo_sm8750_peek.yml"
+          )
+          GKI_WORKFLOWS=(
+            "kernel-a12-5-10.yml"
+            "kernel-a13-5-15.yml"
+            "kernel-a14-6-1.yml"
+            "kernel-a15-6-6.yml"
+            "kernel-a16-6-12.yml"
+          )
+          ALL=("${WORKFLOWS[@]}")
+          if [[ "${{ github.event.inputs.skip_gki }}" != "true" ]]; then
+            ALL+=("${GKI_WORKFLOWS[@]}")
+          fi
+          echo "触发 ${#ALL[@]} 个构建..."
+          for WF in "${ALL[@]}"; do
+            echo "  → $WF"
+            gh workflow run "$WF" --repo "$GITHUB_REPOSITORY" --ref main || echo "  ⚠ $WF 触发失败(可能无 dispatch trigger)"
+          done
+          echo "✅ 全部触发完毕, 各构建独立运行并发布各自 release"
