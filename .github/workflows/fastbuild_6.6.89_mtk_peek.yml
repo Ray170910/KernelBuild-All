@@ -924,8 +924,11 @@ jobs:
           archive: true
 
       - name: 上传 ZIP 工件
+        env:
+          ARTIFACT_NAME: "$(date +%Y%m%d)-Peek-AK3-一加天玑6.6.89.zip"
         uses: actions/upload-artifact@v7
         with:
+          name: ${{ env.ARTIFACT_NAME }}
           path: ${{ github.workspace }}/kernel_workspace/AnyKernel*.zip
           archive: false
 
