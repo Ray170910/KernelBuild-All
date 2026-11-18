@@ -323,7 +323,7 @@ jobs:
           cd kernel_workspace
           git clone --depth=1 https://github.com/$GITHUB_REPOSITORY.git -b $GITHUB_REF_NAME $GITHUB_ACTOR
           cp ./$GITHUB_ACTOR/zram_patch/6.6/001-lz4.patch ./common/
-          cp ./$GITHUB_ACTOR/zram_patch/001-lz4-clearMake.patch ./common/
+          cp ./$GITHUB_ACTOR/zram_patch/6.6/001-lz4-clearMake.patch ./common/
           cp ./$GITHUB_ACTOR/zram_patch/lz4armv8.S ./common/lib
           cp ./$GITHUB_ACTOR/zram_patch/6.6/002-zstd.patch ./common/
           cd ./common
