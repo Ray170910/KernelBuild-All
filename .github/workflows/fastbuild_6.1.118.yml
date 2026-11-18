@@ -804,7 +804,7 @@ jobs:
           mkdir -p boot_fastboot
           cp ./common/out/arch/arm64/boot/Image ./boot_fastboot/Image
           cd boot_fastboot
-          python3 $MKBOOTIMG --header_version 4 --kernel Image --output boot.img
+          python3 $MKBOOTIMG --header_version 4 --kernel Image --output boot.img --os_version 14
           $AVBTOOL add_hash_footer --partition_name boot --partition_size $((192 * 1024 * 1024)) --image boot.img --algorithm SHA256_RSA2048 --key $BOOT_KEY
           ls -l ./boot.img
           cd ..
