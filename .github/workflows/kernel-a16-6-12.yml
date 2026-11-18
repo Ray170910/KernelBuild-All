@@ -71,10 +71,10 @@ on:
 
       # ==================== 开关（默认关闭） ====================
       use_zram:
-        description: "启用 ZRAM 增强算法"
+        description: "启用 ZRAM 增强算法(★GKI 线不兼容, 默认关)"
         required: true
         type: boolean
-        default: true
+        default: false
       use_bbg:
         description: "启用 BBG 防格机"
         required: true
