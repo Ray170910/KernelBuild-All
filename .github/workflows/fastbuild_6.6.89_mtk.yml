@@ -805,7 +805,8 @@ jobs:
           cd kernel_workspace
           REF_IMG="ref-boot-Ace5Ultra-6.6.89.img"
           wget -q "https://github.com/$GITHUB_REPOSITORY/releases/download/ref-boot-images/$REF_IMG"
-          python3 ../scripts/swap_kernel.py "$REF_IMG" ./common/out/arch/arm64/boot/Image boot_swapped.img
+          wget -q "https://raw.githubusercontent.com/$GITHUB_REPOSITORY/main/scripts/swap_kernel.py"
+          python3 swap_kernel.py "$REF_IMG" ./common/out/arch/arm64/boot/Image boot_swapped.img
           rm -f "$REF_IMG"
           BOOT_NAME="$(date +%Y%m%d)-Boot-Ace5Ultra-6.6.89.zip"
           zip -q "$BOOT_NAME" boot_swapped.img
