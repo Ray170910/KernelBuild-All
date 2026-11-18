@@ -843,7 +843,7 @@ jobs:
           cp ./common/out/arch/arm64/boot/Image ./boot_fastboot/Image
           cd boot_fastboot
           python3 $MKBOOTIMG --header_version 4 --kernel Image --output boot.img
-          $AVBTOOL add_hash_footer --partition_name boot --partition_size $((64 * 1024 * 1024)) --image boot.img --algorithm SHA256_RSA2048 --key $BOOT_KEY
+          $AVBTOOL add_hash_footer --partition_name boot --partition_size $((192 * 1024 * 1024)) --image boot.img --algorithm SHA256_RSA2048 --key $BOOT_KEY
           $AVBTOOL info_image --image boot.img | head -12
           ls -l ./boot.img
           cd ..
