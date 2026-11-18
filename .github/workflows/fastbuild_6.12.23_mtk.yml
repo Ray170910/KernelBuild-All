@@ -325,8 +325,8 @@ jobs:
           echo "正在添加lz4 1.10.0 & zstd 1.5.7补丁…"
           cd kernel_workspace
           git clone --depth=1 https://github.com/$GITHUB_REPOSITORY.git -b $GITHUB_REF_NAME $GITHUB_ACTOR
-          cp ./$GITHUB_ACTOR/zram_patch/001-lz4.patch ./common/
-          cp ./$GITHUB_ACTOR/zram_patch/002-zstd.patch ./common/
+          cp ./$GITHUB_ACTOR/zram_patch/6.12/001-lz4.patch ./common/
+          cp ./$GITHUB_ACTOR/zram_patch/6.12/002-zstd.patch ./common/
           cd ./common
           patch -p1 -F 3 < 001-lz4.patch || true
           patch -p1 -F 3 < 002-zstd.patch || true
