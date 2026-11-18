@@ -1733,7 +1733,7 @@ jobs:
             echo "SUSFS 提交日期: ${SUSFS_LATEST_COMMIT_DATE:-未知}"
           } > "$LOG_DIR/summary.txt"
 
-          printf '%s\n' "${{ inputs.ksu_variant }}_kernel-${CONFIG}-Build-Logs" > "$LOG_DIR/artifact-name.txt"
+          printf '%s\n' "Build-Logs-${{ inputs.android_version }}-${{ inputs.kernel_version }}-${{ inputs.sub_level }}" > "$LOG_DIR/artifact-name.txt"
 
           df -h "$GITHUB_WORKSPACE" > "$LOG_DIR/disk-usage.txt" 2>&1 || true
           ccache -s > "$LOG_DIR/ccache-stats.txt" 2>&1 || true
@@ -1899,7 +1899,7 @@ jobs:
         if: inputs.artifact_upload_mode != '上传全部'
         uses: actions/upload-artifact@v6
         with:
-          name: ${{ inputs.ksu_variant }}_kernel-${{ env.CONFIG }}-AnyKernel3
+          name: AK3-${{ inputs.android_version }}-${{ inputs.kernel_version }}-${{ inputs.sub_level }}
           path: AnyKernel3/*
           compression-level: 9
 
