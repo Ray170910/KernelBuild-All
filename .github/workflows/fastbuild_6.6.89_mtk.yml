@@ -1,7 +1,7 @@
 # 上游: Ray170910/oppo_oplus_realme_sm8750 @main .github/workflows/fastbuild_6.6.89_mtk.yml
 # 基准: 02c436abfa (移植时该文件最新 commit; 跟上游更新时 diff 此版本)
 # 移植改动: 默认选项锁定(无KSU/无KPM/BBG开/CVE守卫式应用/ZRAM增强开/无LZ4KD/SUSFS关/ADIOS关/ReKernel关/网络拓展关)
-#          产物名固定 AK3-Ace5Ultra6.6.89.zip (日期前缀动态)、runner 钉 ubuntu-24.04
+#          产物名固定 AK3-一加天玑6.6.89.zip (日期前缀动态)、runner 钉 ubuntu-24.04
 name: (天玑特供) 6.6.89 欧加真OKI内核快速构建
 
 env:
@@ -755,7 +755,7 @@ jobs:
           if [[ ${{ github.event.inputs.kpm_enable }} == 'true' ]]; then
             wget https://github.com/cctv18/KPatch-Next/releases/latest/download/kpn.zip
           fi
-          AK3_NAME="$(date +%Y%m%d)-AK3-Ace5Ultra6.6.89.zip"
+          AK3_NAME="$(date +%Y%m%d)-AK3-一加天玑6.6.89.zip"
           zip -r ../$AK3_NAME ./*
           echo "ak3name=$AK3_NAME" >> $GITHUB_OUTPUT
           
@@ -814,7 +814,7 @@ jobs:
           $AVBTOOL add_hash_footer --partition_name boot --partition_size $((64 * 1024 * 1024)) --image boot.img --algorithm SHA256_RSA2048 --key $BOOT_KEY
           ls -l ./boot.img
           cd ..
-          BOOT_NAME="$(date +%Y%m%d)-Boot-Ace5Ultra6.6.89.zip"
+          BOOT_NAME="$(date +%Y%m%d)-Boot-Ace5Ultra-6.6.89.zip"
           echo "fastboot 直刷: fastboot flash boot boot.img (需已解锁BL, 先备份)" > ./boot_fastboot/README.txt
           cd boot_fastboot
           zip -r ../$BOOT_NAME ./boot.img ./README.txt
@@ -828,7 +828,7 @@ jobs:
           archive: false
       - name: 上传 ZIP 工件
         env:
-          ARTIFACT_NAME: "$(date +%Y%m%d)-AK3-Ace5Ultra6.6.89.zip"
+          ARTIFACT_NAME: "$(date +%Y%m%d)-AK3-一加天玑6.6.89.zip"
         uses: actions/upload-artifact@v7
         with:
           name: ${{ env.ARTIFACT_NAME }}
