@@ -915,6 +915,23 @@ jobs:
           path: ${{ github.workspace }}/kernel_workspace/ccache.log
           archive: true
 
+      - name: 📦 制作 fastboot 直刷 boot.img (参考镜像载荷替换)
+        run: |
+          cd kernel_workspace
+          REF_IMG="ref-boot-Ace5Ultra-6.6.89.img"
+          wget -q "https://github.com/$GITHUB_REPOSITORY/releases/download/ref-boot-images/$REF_IMG"
+          python3 ../scripts/swap_kernel.py "$REF_IMG" ./common/out/arch/arm64/boot/Image boot_swapped.img
+          rm -f "$REF_IMG"
+          BOOT_NAME="$(date +%Y%m%d)-Boot-Peek-Ace5Ultra-6.6.89.zip"
+          zip -q "$BOOT_NAME" boot_swapped.img
+          mv "$BOOT_NAME" ../
+          echo "BOOT: $BOOT_NAME"
+
+      - name: 上传 Boot 工件
+        uses: actions/upload-artifact@v7
+        with:
+          path: ${{ github.workspace }}/kernel_workspace/*Boot*.zip
+          archive: false
       - name: 上传 ZIP 工件
         env:
           ARTIFACT_NAME: "$(date +%Y%m%d)-Peek-AK3-一加天玑6.6.89.zip"

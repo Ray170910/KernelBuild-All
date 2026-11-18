@@ -791,28 +791,16 @@ jobs:
           path: ${{ github.workspace }}/kernel_workspace/ccache.log
           archive: true
 
-      - name: 📦 制作 fastboot 直刷 boot.img
+      - name: 📦 制作 fastboot 直刷 boot.img (参考镜像载荷替换)
         run: |
           cd kernel_workspace
-          BRANCH=main-kernel-build-2024
-          git clone https://android.googlesource.com/platform/system/tools/mkbootimg -b $BRANCH --depth 1 mkbootimg
-          git clone https://android.googlesource.com/kernel/prebuilts/build-tools -b $BRANCH --depth 1 kernel-build-tools
-          MKBOOTIMG=$GITHUB_WORKSPACE/kernel_workspace/mkbootimg/mkbootimg.py
-          AVBTOOL=$GITHUB_WORKSPACE/kernel_workspace/kernel-build-tools/linux-x86/bin/avbtool
-          BOOT_KEY=$GITHUB_WORKSPACE/kernel_workspace/boot_sign_key.pem
-          openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 > $BOOT_KEY
-          mkdir -p boot_fastboot
-          cp ./common/out/arch/arm64/boot/Image ./boot_fastboot/Image
-          cd boot_fastboot
-          python3 $MKBOOTIMG --header_version 4 --kernel Image --output boot.img --os_version 14
-          $AVBTOOL add_hash_footer --partition_name boot --partition_size $((192 * 1024 * 1024)) --image boot.img --algorithm SHA256_RSA2048 --key $BOOT_KEY
-          ls -l ./boot.img
-          cd ..
+          REF_IMG="ref-boot-Ace5-6.1.118.img"
+          wget -q "https://github.com/$GITHUB_REPOSITORY/releases/download/ref-boot-images/$REF_IMG"
+          python3 ../scripts/swap_kernel.py "$REF_IMG" ./common/out/arch/arm64/boot/Image boot_swapped.img
+          rm -f "$REF_IMG"
           BOOT_NAME="$(date +%Y%m%d)-Boot-Ace5-6.1.118.zip"
-          echo "fastboot 直刷: fastboot flash boot boot.img (需已解锁BL, 先备份)" > ./boot_fastboot/README.txt
-          cd boot_fastboot
-          zip -r ../$BOOT_NAME ./boot.img ./README.txt
-          cd ..
+          zip -q "$BOOT_NAME" boot_swapped.img
+          mv "$BOOT_NAME" ../
           echo "BOOT: $BOOT_NAME"
 
       - name: 上传 Boot 工件
