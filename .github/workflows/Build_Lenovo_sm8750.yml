@@ -864,10 +864,9 @@ jobs:
           mv ./new-boot.img ./boot.img
           python3 rebuild_avb.py --chained-mode
           BOOT_ARTIFACT="$(date +%Y%m%d)-Boot-四代.zip"
-          cd kernel_workspace/boot_avb_tool/AOSP-Testkey-BootSigner-main
-          zip -q ../../"$BOOT_ARTIFACT" ./boot.img
+          zip -q "../../$BOOT_ARTIFACT" ./boot.img
           echo "BOOT_ARTIFACT=$BOOT_ARTIFACT" >> $GITHUB_ENV
-          echo "已打包: $BOOT_ARTIFACT"
+          echo "已打包: kernel_workspace/$BOOT_ARTIFACT"
 
       - name: 📤 Upload Signed boot (上传已签名的 boot)
         if: ${{ env.ENABLE_SIGNED == 'true' }}
