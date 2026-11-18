@@ -730,9 +730,9 @@ jobs:
         id: create_zip
         run: |
           cd kernel_workspace
-          wget -q "https://github.com/cctv18/AnyKernel3/archive/refs/heads/main.zip" -O ak3.zip
+          wget -q "https://github.com/cctv18/AnyKernel3/archive/refs/heads/master.zip" -O ak3.zip
           unzip -qo ak3.zip
-          mv AnyKernel3-main AnyKernel3
+          mv AnyKernel3-master AnyKernel3
           rm -f ak3.zip
           rm -rf ./AnyKernel3/.git
           cd AnyKernel3
@@ -801,6 +801,7 @@ jobs:
           archive: true
 
       - name: 📦 制作 fastboot 直刷 boot.img (参考镜像载荷替换)
+        id: boot_swap
         run: |
           cd kernel_workspace
           REF_IMG="ref-boot-Ace5Ultra-6.6.89.img"
@@ -810,13 +811,14 @@ jobs:
           rm -f "$REF_IMG"
           BOOT_NAME="$(date +%Y%m%d)-Boot-Ace5Ultra-6.6.89.zip"
           zip -q "$BOOT_NAME" boot_swapped.img
-          mv "$BOOT_NAME" ../
+          echo "bootname=$BOOT_NAME" >> $GITHUB_OUTPUT
           echo "BOOT: $BOOT_NAME"
 
       - name: 上传 Boot 工件
         uses: actions/upload-artifact@v7
         with:
-          path: ${{ github.workspace }}/kernel_workspace/*Boot*.zip
+          name: ${{ steps.boot_swap.outputs.bootname }}
+          path: ${{ github.workspace }}/kernel_workspace/${{ steps.boot_swap.outputs.bootname }}
           archive: false
       - name: 上传 ZIP 工件
         env:

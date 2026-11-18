@@ -116,7 +116,7 @@ jobs:
     outputs:
       ksuver: ${{ steps.ksu_version.outputs.ksuver }}
       ak3name: ${{ steps.create_zip.outputs.ak3name }}
-      bootname: ${{ steps.boot_zip.outputs.bootname }}
+      bootname: ${{ steps.boot_swap.outputs.bootname }}
     permissions:
       actions: write
       contents: read
@@ -856,57 +856,6 @@ jobs:
           echo "BBG: ${{ github.event.inputs.baseband_guard }}" >> ./ak3.log
           zip -z ../$AK3_NAME < ./ak3.log
 
-      - name: 制作 fastboot 直刷 boot.img
-        id: boot_zip
-        run: |
-          cd kernel_workspace
-          # 打包公式与 GKI_KernelSU_SUSFS2 build.yml (Android 13+ 分支) 同源:
-          # mkbootimg 纯内核构建 (header v4, 无 ramdisk/cmdline/os_version) +
-          # avbtool 64MiB SHA256_RSA2048 footer (每次构建现生成随机 key, 解锁机
-          # 只校验 footer 结构不校验签名身份)
-          BRANCH=main-kernel-build-2024
-          git clone https://android.googlesource.com/platform/system/tools/mkbootimg -b $BRANCH --depth 1 mkbootimg
-          git clone https://android.googlesource.com/kernel/prebuilts/build-tools -b $BRANCH --depth 1 kernel-build-tools
-          MKBOOTIMG=$GITHUB_WORKSPACE/kernel_workspace/mkbootimg/mkbootimg.py
-          AVBTOOL=$GITHUB_WORKSPACE/kernel_workspace/kernel-build-tools/linux-x86/bin/avbtool
-          BOOT_KEY=$GITHUB_WORKSPACE/kernel_workspace/boot_sign_key.pem
-          openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 > $BOOT_KEY
-          mkdir -p boot_fastboot
-          cp ./common/out/arch/arm64/boot/Image ./boot_fastboot/Image
-          cd boot_fastboot
-          python3 $MKBOOTIMG --header_version 4 --kernel Image --output boot.img --os_version 15
-          $AVBTOOL add_hash_footer --partition_name boot --partition_size $((64 * 1024 * 1024)) --image boot.img --algorithm SHA256_RSA2048 --key $BOOT_KEY
-          $AVBTOOL info_image --image boot.img | head -12
-          ls -l ./boot.img
-          cd ..
-          if [[ ${{ github.event.inputs.ksu_type }} == "sukisu" ]]; then
-            KSU_TYPENAME="SukiSU"
-          elif [[ ${{ github.event.inputs.ksu_type }} == "resukisu" ]]; then
-            KSU_TYPENAME="ReSukiSU"
-          elif [[ ${{ github.event.inputs.ksu_type }} == "ksunext" ]]; then
-            KSU_TYPENAME="KSUNext"
-          elif [[ ${{ github.event.inputs.ksu_type }} == "ksu" ]]; then
-            KSU_TYPENAME="KSU"
-          else
-            KSU_TYPENAME="none"
-          fi
-          BOOT_NAME="$(date +%Y%m%d)-Boot-Peek-Ace5Ultra6.6.89.zip"
-          {
-            echo "fastboot 直刷包 (boot 分区, mkbootimg v4 纯内核 + AVB RSA2048 footer, 与 GKI_KernelSU_SUSFS2 打包公式同源)"
-            echo ""
-            echo "前提: BootLoader 已解锁"
-            echo "刷入: 解压后执行  fastboot flash boot boot.img"
-            echo "      (A/B 设备自动刷入当前槽位, 也可显式 fastboot flash boot_a/boot_b)"
-            echo ""
-            echo "※※※ 刷前务必备份原 boot 分区! ※※※"
-          } > ./boot_fastboot/README.txt
-          cd boot_fastboot
-          zip -r ../$BOOT_NAME ./boot.img ./README.txt
-          cd ..
-          zip -z ./$BOOT_NAME < ./AnyKernel3/ak3.log
-          echo "bootname=$BOOT_NAME" >> $GITHUB_OUTPUT
-          echo "BOOT 直刷包: kernel_workspace/$BOOT_NAME"
-
       - name: 上传 Ccache 调试日志
         if: always() && inputs.ccache_debug
         uses: actions/upload-artifact@v7
@@ -916,6 +865,7 @@ jobs:
           archive: true
 
       - name: 📦 制作 fastboot 直刷 boot.img (参考镜像载荷替换)
+        id: boot_swap
         run: |
           cd kernel_workspace
           REF_IMG="ref-boot-Ace5Ultra-6.6.89.img"
@@ -925,13 +875,14 @@ jobs:
           rm -f "$REF_IMG"
           BOOT_NAME="$(date +%Y%m%d)-Boot-Peek-Ace5Ultra-6.6.89.zip"
           zip -q "$BOOT_NAME" boot_swapped.img
-          mv "$BOOT_NAME" ../
+          echo "bootname=$BOOT_NAME" >> $GITHUB_OUTPUT
           echo "BOOT: $BOOT_NAME"
 
       - name: 上传 Boot 工件
         uses: actions/upload-artifact@v7
         with:
-          path: ${{ github.workspace }}/kernel_workspace/*Boot*.zip
+          name: ${{ steps.boot_swap.outputs.bootname }}
+          path: ${{ github.workspace }}/kernel_workspace/${{ steps.boot_swap.outputs.bootname }}
           archive: false
       - name: 上传 ZIP 工件
         env:
@@ -940,12 +891,5 @@ jobs:
         with:
           name: ${{ env.ARTIFACT_NAME }}
           path: ${{ github.workspace }}/kernel_workspace/${{ steps.create_zip.outputs.ak3name }}
-          archive: false
-
-      - name: 上传 Boot ZIP 工件
-        uses: actions/upload-artifact@v7
-        with:
-          name: ${{ steps.boot_zip.outputs.bootname }}
-          path: ${{ github.workspace }}/kernel_workspace/${{ steps.boot_zip.outputs.bootname }}
           archive: false
 
