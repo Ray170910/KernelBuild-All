@@ -860,6 +860,6 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: ${{ env.ARTIFACT_NAME }}
-          path: ${{ github.workspace }}/kernel_workspace/*.zip
+          path: ${{ github.workspace }}/kernel_workspace/*AK3*.zip
           archive: false
 
