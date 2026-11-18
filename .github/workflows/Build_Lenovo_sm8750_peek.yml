@@ -856,6 +856,7 @@ jobs:
           cp ./Image "./kernel"
 
       - name: 📤 Upload Image (上传 Image)
+        if: false  # 不产出裸 Image
         uses: actions/upload-artifact@v5
         with:
          name: kernel_image_${{ env.KERNEL_VERSION }}
@@ -891,7 +892,7 @@ jobs:
 
   upload_rekernel:
     name: Upload Re-Kernel Module
-    if: ${{ github.event.inputs.enable_ReKernel == 'true' }}
+    if: false && ${{ github.event.inputs.enable_ReKernel == 'true' }}
     needs: build
     runs-on: ubuntu-24.04
     steps:
