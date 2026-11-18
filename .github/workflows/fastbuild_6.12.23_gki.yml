@@ -1,7 +1,7 @@
 # 上游: Ray170910/oppo_oplus_realme_sm8850 @main .github/workflows/fastbuild_6.12.23_gki.yml
 # 基准: 50486433f6 (移植时该文件最新 commit; 跟上游更新时 diff 此版本)
 # 移植改动: 默认选项锁定(无KSU/无KPM/BBG开/CVE守卫式应用/ZRAM增强开/无LZ4KD/SUSFS关/ADIOS关/ReKernel关/网络拓展关)
-#          产物名固定 AK3-一加骁龙6.12.23.zip (日期前缀动态)、runner 钉 ubuntu-24.04
+#          产物名固定 AK3-Ace56.12.23.zip (日期前缀动态)、runner 钉 ubuntu-24.04
 name: (新版米/欧加真通用) 6.12.23 GKI内核快速构建
 
 env:
@@ -806,7 +806,7 @@ jobs:
           if [[ ${{ github.event.inputs.kpm_enable }} == 'true' ]]; then
             wget https://github.com/cctv18/KPatch-Next/releases/latest/download/kpn.zip
           fi
-          AK3_NAME="$(date +%Y%m%d)-AK3-一加骁龙6.12.23.zip"
+          AK3_NAME="$(date +%Y%m%d)-AK3-Ace56.12.23.zip"
           zip -r ../$AK3_NAME ./*
           echo "ak3name=$AK3_NAME" >> $GITHUB_OUTPUT
           
@@ -849,7 +849,7 @@ jobs:
 
       - name: 上传 ZIP 工件
         env:
-          ARTIFACT_NAME: "$(date +%Y%m%d)-AK3-一加骁龙6.12.23.zip"
+          ARTIFACT_NAME: "$(date +%Y%m%d)-AK3-Ace56.12.23.zip"
         uses: actions/upload-artifact@v7
         with:
           name: ${{ env.ARTIFACT_NAME }}

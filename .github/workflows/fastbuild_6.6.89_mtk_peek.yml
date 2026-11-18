@@ -1,7 +1,7 @@
 # 上游: Ray170910/oppo_oplus_realme_sm8750 @main .github/workflows/fastbuild_6.6.89_mtk_peek.yml
 # 基准: 3e05457c5d (移植时该文件最新 commit; 跟上游更新时 diff 此版本)
 # 移植改动: 默认选项锁定(无KSU/无KPM/BBG开/CVE守卫式应用/ZRAM增强开/无LZ4KD/SUSFS关/ADIOS关/ReKernel关/网络拓展关)
-#          产物名固定 Peek-AK3-一加天玑6.6.89.zip (日期前缀动态)、runner 钉 ubuntu-24.04
+#          产物名固定 Peek-AK3-Ace5Ultra6.6.89.zip (日期前缀动态)、runner 钉 ubuntu-24.04
 name: (peek特供) 6.6.89 欧加真OKI内核快速构建
 
 env:
@@ -822,7 +822,7 @@ jobs:
           if [[ ${{ github.event.inputs.kpm_enable }} == 'true' ]]; then
             wget https://github.com/cctv18/KPatch-Next/releases/latest/download/kpn.zip
           fi
-          AK3_NAME="$(date +%Y%m%d)-Peek-AK3-一加天玑6.6.89.zip"
+          AK3_NAME="$(date +%Y%m%d)-Peek-AK3-Ace5Ultra6.6.89.zip"
           zip -r ../$AK3_NAME ./*
           echo "ak3name=$AK3_NAME" >> $GITHUB_OUTPUT
           
@@ -890,7 +890,7 @@ jobs:
           else
             KSU_TYPENAME="none"
           fi
-          BOOT_NAME="$(date +%Y%m%d)-Boot-Peek-一加天玑6.6.89.zip"
+          BOOT_NAME="$(date +%Y%m%d)-Boot-Peek-Ace5Ultra6.6.89.zip"
           {
             echo "fastboot 直刷包 (boot 分区, mkbootimg v4 纯内核 + AVB RSA2048 footer, 与 GKI_KernelSU_SUSFS2 打包公式同源)"
             echo ""
@@ -917,7 +917,7 @@ jobs:
 
       - name: 上传 ZIP 工件
         env:
-          ARTIFACT_NAME: "$(date +%Y%m%d)-Peek-AK3-一加天玑6.6.89.zip"
+          ARTIFACT_NAME: "$(date +%Y%m%d)-Peek-AK3-Ace5Ultra6.6.89.zip"
         uses: actions/upload-artifact@v7
         with:
           name: ${{ env.ARTIFACT_NAME }}
