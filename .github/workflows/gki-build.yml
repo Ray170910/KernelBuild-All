@@ -1538,12 +1538,14 @@ jobs:
             echo "  [$p] md5=$(md5sum "$TMP/$p" | cut -d" " -f1) bytes=$(wc -c < "$TMP/$p")"
             head -1 "$TMP/$p" | grep -q '^diff --git ' || {
               echo "::error::$p 下载内容不是补丁 (首行: $(head -c 120 "$TMP/$p"))"; exit 1; }
-            if ! patch -p1 --batch --fuzz=0 --dry-run -s -i "$TMP/$p"; then
-              echo "::error::$p 应用失败 (fuzz=0)"
+            # 2026-11-21: fuzz=0 在老 KMI tag(6.1.78-2024-06 等)的 include 区
+            # 上下文漂移上必挂; OKI 线同款补丁一直 fuzz=3, 对齐。
+            if ! patch -p1 --batch --fuzz=3 --dry-run -s -i "$TMP/$p"; then
+              echo "::error::$p 应用失败 (fuzz=3)"
               patch -p1 --batch --fuzz=0 --dry-run -i "$TMP/$p" || true
               exit 1
             fi
-            patch -p1 --batch --fuzz=0 -s -i "$TMP/$p"
+            patch -p1 --batch --fuzz=3 -s -i "$TMP/$p"
             echo "  OK  $p"
           done < "$TMP/list"
           echo "[GameSense] $COUNT 个补丁全部应用成功"
