@@ -1493,7 +1493,9 @@ jobs:
 
       # ==================== GameSense V9 ====================
       - name: 🎮 Apply GameSense patches (auto-detect kernel version)
-        if: false  # af_unix GKI 树不兼容, 暂关
+        # 2026-11-21 重新启用: 旧不兼容根因是 sendmsg 挂钩 hunk 的行号漂移,
+        # uprobe 改造已删该 hunk; 五个 GKI 版本(5.10/5.15/6.1/6.6/6.12)
+        # 全部 fuzz=0 真源 apply 验证通过
         env:
           PATCH_TOKEN: ${{ secrets.PATCH_TOKEN }}
         run: |
