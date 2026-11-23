@@ -807,6 +807,7 @@ jobs:
           REF_IMG="ref-boot-Ace5Ultra-6.6.89.img"
           wget -q "https://github.com/$GITHUB_REPOSITORY/releases/download/ref-boot-images/$REF_IMG"
           wget -q "https://raw.githubusercontent.com/$GITHUB_REPOSITORY/main/scripts/swap_kernel.py"
+          pip3 install -q lz4   # MTK LZ4 legacy 打包依赖
           python3 swap_kernel.py "$REF_IMG" ./common/out/arch/arm64/boot/Image boot_swapped.img
           rm -f "$REF_IMG"
           BOOT_NAME="$(date +%Y%m%d)-Boot-Ace5Ultra-6.6.89.zip"
